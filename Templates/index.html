@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <title>IAM Demo Portal</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 720px; margin: 60px auto; padding: 0 20px; color: #1a1a2e; }
+    h1 { font-size: 1.6rem; }
+    .btn { display: inline-block; padding: 12px 22px; margin: 8px 8px 8px 0; border-radius: 8px;
+           text-decoration: none; color: #fff; font-weight: 600; }
+    .okta { background: #007dc1; }
+    .entra { background: #0078d4; }
+    .muted { color: #666; }
+    code { background: #f0f0f5; padding: 2px 6px; border-radius: 4px; }
+    .warn { background: #fff8e1; border-left: 4px solid #ffb300; padding: 12px 16px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>IAM Demo Portal — OIDC Auth Code + PKCE</h1>
+  <p class="muted">Acelasi flow, doi provideri. Diferenta e doar config-ul de discovery.</p>
+
+  {% if configured %}
+    <p>Autentifica-te cu:</p>
+    {% if 'okta' in configured %}
+      <a class="btn okta" href="{{ url_for('login', provider='okta') }}">Login cu Okta</a>
+    {% endif %}
+    {% if 'entra' in configured %}
+      <a class="btn entra" href="{{ url_for('login', provider='entra') }}">Login cu Entra ID</a>
+    {% endif %}
+  {% else %}
+    <div class="warn">
+      Niciun provider configurat inca. Completeaza variabilele de mediu
+      (vezi <code>.env.example</code>) si reporneste aplicatia.
+    </div>
+  {% endif %}
+
+  <hr style="margin: 30px 0;">
+  <p class="muted">
+    Dupa login vezi: token-urile decodate, o pagina de validare completa (JWKS + iss + exp),
+    si un endpoint protejat <code>/api/me</code>.
+  </p>
+</body>
+</html>

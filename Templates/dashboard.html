@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <title>Dashboard — IAM Demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 40px auto; padding: 0 20px; color: #1a1a2e; }
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.1rem; margin-top: 28px; }
+    pre { background: #1a1a2e; color: #e0e0f0; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+    .key { color: #7ec8ff; }
+    .claim { background: #fff3cd; padding: 1px 5px; border-radius: 3px; color: #856404; font-weight: 600; }
+    .btn { display: inline-block; padding: 8px 16px; margin: 6px 6px 6px 0; border-radius: 6px;
+           text-decoration: none; color: #fff; background: #333; font-size: 0.9rem; }
+    .btn.green { background: #2e7d32; }
+    table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+    td { padding: 6px 10px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+    td:first-child { font-weight: 600; width: 140px; }
+    .muted { color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Autentificat prin <span style="text-transform:capitalize">{{ provider }}</span></h1>
+
+  <h2>Cine esti (userinfo)</h2>
+  <table>
+    {% for k, v in user.items() %}
+      <tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+    {% endfor %}
+  </table>
+
+  <h2>ID Token — decodat</h2>
+  <p class="muted">Dovada de identitate. Uita-te la <span class="claim">iss</span>,
+     <span class="claim">aud</span>, <span class="claim">sub</span>,
+     <span class="claim">exp</span>, <span class="claim">nonce</span>.</p>
+  {% if tokens.id_token %}
+    <pre>{{ tokens.id_token | tojson(indent=2) }}</pre>
+  {% else %}
+    <p class="muted">(niciun id_token)</p>
+  {% endif %}
+
+  <h2>Access Token — decodat</h2>
+  <p class="muted">Cheia de acces la API-uri. Compara <span class="claim">aud</span> si
+     <span class="claim">scope/scp</span> cu id_token-ul — sunt diferite ca rol.</p>
+  {% if tokens.access_token %}
+    <pre>{{ tokens.access_token | tojson(indent=2) }}</pre>
+  {% else %}
+    <p class="muted">(access token opac — nu e JWT, normal la unele config-uri Okta)</p>
+  {% endif %}
+
+  <a class="btn green" href="{{ url_for('validate') }}">Valideaza tokenul (JWKS + iss + exp)</a>
+  <a class="btn" href="{{ url_for('logout') }}">Logout</a>
+
+  <h2>Testeaza endpoint-ul protejat</h2>
+  <p class="muted">Copiaza access token-ul de mai jos si ruleaza in terminal:</p>
+  <pre>curl -H "Authorization: Bearer {{ raw_access[:40] }}..." \
+     "http://localhost:5000/api/me?provider={{ provider }}"</pre>
+</body>
+</html>

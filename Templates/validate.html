@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <title>Validare token — IAM Demo</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #1a1a2e; }
+    pre { background: #1a1a2e; color: #e0e0f0; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+    .ok { background: #e8f5e9; border-left: 4px solid #2e7d32; padding: 12px 16px; border-radius: 4px; }
+    .err { background: #ffebee; border-left: 4px solid #c62828; padding: 12px 16px; border-radius: 4px; }
+    .btn { display: inline-block; padding: 8px 16px; margin-top: 16px; border-radius: 6px;
+           text-decoration: none; color: #fff; background: #333; }
+  </style>
+</head>
+<body>
+  <h1>Validare access token — {{ provider }}</h1>
+
+  {% if result.errors %}
+    <div class="err">
+      <strong>Probleme gasite:</strong>
+      <ul>{% for e in result.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+    </div>
+  {% else %}
+    <div class="ok"><strong>Token valid.</strong> Semnatura verificata prin JWKS, iss corect, neexpirat.</div>
+  {% endif %}
+
+  <h2>Claims validate</h2>
+  <pre>{{ result.claims | tojson(indent=2) }}</pre>
+
+  <a class="btn" href="{{ url_for('dashboard') }}">Inapoi la dashboard</a>
+</body>
+</html>
